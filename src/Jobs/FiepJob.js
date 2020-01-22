@@ -1,19 +1,10 @@
 /* eslint-disable no-await-in-loop */
 import * as Sentry from '@sentry/node';
 
-import Fiesp from '../models/Fiesp';
-import Gpsp from '../Services/Gpsp';
+import FiespChamadosService from '../services/FiepChamadosService';
+import FiepChamadosRealizadosService from '../services/FiepChamadosRealizadosService';
 
-async function generateTask(task) {
-  const response = await Gpsp.startTask({
-    ...task,
-    id: task.companyInfo.principalTask,
-  });
-
-  if (response.status === 200) {
-    await Fiesp.confirmTask(task.number);
-  }
-}
+import Gpsp from '../lib/Gpsp';
 
 class FiespJob {
   get time() {
@@ -34,18 +25,21 @@ class FiespJob {
       );
 
       const callByCompany = tasksOfStart.map(t => {
-        return Fiesp.getAvailableCallsByCompany(
-          t.locationName
+        const filter = {
+          ...t,
+          locationName: t.locationName
             .toLowerCase()
             .trim()
             .replace(/\s/g, ''),
-          t
-        );
+        };
+
+        return FiespChamadosService.getAvailableCallsByCompany(filter);
       });
 
       const wrapperListOfTasks = await Promise.all(callByCompany);
+
       const availableWrapper = await wrapperListOfTasks.filter(
-        t => t !== undefined
+        t => t.id !== undefined
       );
 
       const generateTasks = availableWrapper.map(a =>
@@ -59,7 +53,7 @@ class FiespJob {
       );
       const createdtasks = await Promise.all(generateTasks);
       const registerTasks = createdtasks.map(c =>
-        Fiesp.confirmTask(c.callInfo.number)
+        FiepChamadosRealizadosService.store(c.callInfo.number)
       );
 
       await Promise.all(registerTasks);

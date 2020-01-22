@@ -1,7 +1,6 @@
 import cron from 'node-cron';
-import { EventEmitter } from 'events';
 
-import FiespJob from './FiespJob';
+import FiespJob from './FiepJob';
 
 const jobs = [FiespJob];
 

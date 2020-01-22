@@ -4,11 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "commit": "git-cz",
     "dev": "nodemon src/index.js",
     "dev:debug": "nodemon --inspect src/index.js",
     "pretest": "knex migrate:rollback  && knex migrate:latest  && knex seed:run",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "dependencies": {
     "@sentry/node": "5.11.0",
@@ -21,11 +20,13 @@
     "knex": "^0.20.8",
     "mssql": "^6.0.1",
     "node-cron": "^2.0.3",
+    "objection": "^2.1.2",
     "pg": "^7.17.1"
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
   "devDependencies": {
