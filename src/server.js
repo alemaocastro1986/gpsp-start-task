@@ -6,7 +6,6 @@ import * as Sentry from '@sentry/node';
 import CronJobs from './Jobs';
 
 import sentryConfig from './config/sentry';
-import Gpsp from './Services/Gpsp';
 
 class Server {
   constructor() {
