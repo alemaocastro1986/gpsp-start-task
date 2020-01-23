@@ -29,7 +29,7 @@ class Server {
     this.app.get('/', async (req, res) => {
       return res.json({
         name: 'gpsp_start_task',
-        version: '1.0.0',
+        version: '1.0.1',
       });
     });
     this.app.use(Sentry.Handlers.errorHandler());
